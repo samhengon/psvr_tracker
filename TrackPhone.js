@@ -28,9 +28,10 @@ psvrServer.on('transformUpdated', transform => {
 })
 
 // Every 1 second, wake up and check the drift
-setInterval(() => {
+const checkDrift = function () {
     const logExpression = `PSVR=${psvrRotation}, Phone=${phoneRotation}`
     console.log(logExpression)
+    let timeoutValue = 1000
     // Check if you are centered, using the PHONE gyro data (only trust your phone)
     if (phoneRotation >= -2 && phoneRotation <= 2) {
         // Calculates the drift (to be tuned)
@@ -41,6 +42,10 @@ setInterval(() => {
             console.log(`potential drifting! delta(phone-psvr)=${estDrift}! ${logExpression}`)
             console.log(`Sending VR recenter ctrl+space...`)
             robot.keyTap('space', 'control')
+            timeoutValue = 1000
         }
     }
-}, 1000);
+    setTimeout(checkDrift, timeoutValue);
+}
+
+setTimeout(checkDrift, 0)
