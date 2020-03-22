@@ -14,8 +14,8 @@ Pre-requisit:
 
 How to use:
 1. open 2 instances of OpenTrack:
-+ PSVR - Input: SteamVR, Output: UDP over network (port 6666)
-+ Phone - Input: UDP over network (port 4242), Output: UDP over network (port 5555)
++ PSVR - Input: SteamVR, Output: UDP over network (port 6666) [check out PSVR.ini]
++ Phone - Input: UDP over network (port 4242), Output: UDP over network (port 5555) [check out Phone.ini]
 + Set hot key "ctrl+enter" to toggle tracking
 + Set hot key "ctrl+up" to toggle center
 2. start OpenTrack app on Android phone, connects to your OpenTrack. Your phone and your PC should be in same network.
