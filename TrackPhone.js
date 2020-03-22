@@ -1,31 +1,4 @@
-// const dgram = require('dgram')
-// const server = dgram.createSocket('udp4')
-
-// const HOST = '0.0.0.0'
-// const PORT = 5555
-
-// server.on('error', (err) => {
-//     console.log(`server error:\n${err.stack}`)
-//     server.close()
-// })
-
-// server.on('message', (msg, rinfo) => {
-//     console.log(`server got: ${msg} from ${rinfo.address}`)
-// })
-
-// server.on('listening', () => {
-//     const address = server.address()
-//     console.log(`server listening ${address.address}:${address.port}`)
-// })
-
-// server.bind({
-//     address: HOST,
-//     port: PORT,
-//     exclusive: true
-// })
-
 const robot = require('robotjs')
-// const ks = require('node-key-sender')
 const OpenTrack = require('opentrack')
 const phoneServer = new OpenTrack.Server('127.0.0.1', 5555)
 const psvrServer = new OpenTrack.Server('127.0.0.1', 6666)
@@ -54,24 +27,20 @@ psvrServer.on('transformUpdated', transform => {
     psvrRotation = transform.rotation['x']
 })
 
+// Every 1 second, wake up and check the drift
 setInterval(() => {
     const logExpression = `PSVR=${psvrRotation}, Phone=${phoneRotation}`
     console.log(logExpression)
+    // Check if you are centered, using the PHONE gyro data (only trust your phone)
     if (phoneRotation >= -2 && phoneRotation <= 2) {
+        // Calculates the drift (to be tuned)
         const estDrift = phoneRotation - psvrRotation
+        // If the drifting delta is too much, send a keyboard input to re-center
+        // NOTE: you should map this key in your game to work!
         if (!(Math.abs(estDrift) <= 3)) {
             console.log(`potential drifting! delta(phone-psvr)=${estDrift}! ${logExpression}`)
             console.log(`Sending VR recenter ctrl+space...`)
             robot.keyTap('space', 'control')
-            // ks.sendCombination(['control', 'space'])
-            // // debug purpose only
-            // ks.sendCombination(['space'])
-            //     .then((resolve) => {
-            //         console.log(resolve)
-            //     })
-            //     .catch((err) => {
-            //         console.log(err)
-            //     })
         }
     }
 }, 1000);
